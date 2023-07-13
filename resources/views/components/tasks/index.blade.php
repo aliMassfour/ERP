@@ -6,6 +6,21 @@
 
     <x-slot name="style">
         <style>
+            css Copy .form-control-file {
+                font-size: 16px;
+                color: #333;
+                background-color: #f8f9fa;
+                border-radius: 5px;
+                padding: 10px;
+                border: 1px solid #ced4da;
+            }
+
+            .form-control-file:focus {
+                outline: none;
+                border-color: #80bdff;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
             .order-card {
                 border: 1px solid #CCC;
                 border-radius: 10px;
@@ -106,6 +121,7 @@
                 color: #012951;
             }
         </style>
+
     </x-slot>
     @if(sizeOf($tasks)>0)
     @foreach ($tasks as $task)
@@ -126,13 +142,22 @@
                         onclick="show({{ json_encode($task)  }})">
                         show count down time
                     </button>
+                    @if(auth()->user()->role->name=='employee')
+                    <button type="button" class="btn bts-success"
+                        onclick="report({{ json_encode($task) }})">report</button>
+                    @endif
+                    @if(auth()->user()->role->name=='admin')
                     <div class="btn-group">
                         <a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
                         <div class="dropdown-menu">
-
-
+                            <form action="{{ route('task.destroy',$task->id) }}" method="POST">
+                                @csrf
+                                @method('delete')
+                                <button class="dropdown-item" type="submit">delete</button>
+                            </form>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -140,6 +165,26 @@
             <div class="list-group-items"></div>
             <div>
 
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="reportModal{{ $task->id }}" tabindex="-1" role="dialog"
+        aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Task Report
+                </div>
+                <div class="modal-body">
+                    <form action="{{    route('task.report',$task->id)  }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="report{{ $task->id }}">report</label>
+                            <input type="file" id="report{{ $task->id }}" class="form-control-file" name="report">
+                        </div>
+                        <button type="submit" class="btn btn-success">report</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -194,6 +239,13 @@
     @endphp
     @endif
 
+    <script>
+        // this script is for report modal
+        function report(task){
+            console.log(task);
+            $('#reportModal'+task.id).modal('show');
+        }
+    </script>
 
     <script>
         function show(task) {

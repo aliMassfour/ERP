@@ -54,4 +54,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'user_id', 'id');
     }
+    public function hasNotification()
+    {
+        $notifications = $this->notifications;
+        foreach ($notifications as $not) {
+            if ($not->status == "unread") {
+                return true;
+            }
+        }
+        return false;
+    }
 }

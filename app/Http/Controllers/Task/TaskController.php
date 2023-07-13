@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\User;
 use App\Notification\TaskNotification;
+use App\Upload\FileUpload;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -19,9 +20,10 @@ class TaskController extends Controller
     public function index(User $user)
     {
         $tasks = $user->tasks;
-        return view('components.tasks.index')->with('tasks',$tasks);
+        return view('components.tasks.index')->with('tasks', $tasks);
     }
-    public function create(){
+    public function create()
+    {
         return view('components.tasks.create_task');
     }
     public function store(Request $request)
@@ -50,4 +52,20 @@ class TaskController extends Controller
             // return redirect()->back()->withStatus('__error ocurred please try again');
         }
     }
+    public function UserTaskList()
+    {
+        $user = auth()->user();
+        $tasks = $user->tasks;
+        return view('components.tasks.index')->with('tasks', $tasks);
+    }
+    public function accept(Task $task)
+    {
+    }
+    public function destroy(Task $task)
+    {
+        $task->delete();
+        return redirect()->route('dashboard')->withStatus('delete the task success');
+    }
+   
+    
 }

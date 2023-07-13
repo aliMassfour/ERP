@@ -11,8 +11,18 @@
 <x-side-bar-group :page="$page" prefix="users" title="Users Management" icon="group">
     <x-side-bar-element :page="$page" prefix="users.add" title="Add User" icon="add" route="users.create"/>
     <x-side-bar-element :page="$page" prefix="users.view" title="View Users" icon="view_list" route="users.index"/>
+</x-side-bar-group> 
+{{-- task management --}}
+<x-side-bar-group :page="$page" title="Task Managment" prefix="task.create" icon="group">
+    <x-side-bar-element :page="$page" prefix="task.create" title="create new task" icon="add" route="task.create"/>
+    
 </x-side-bar-group>
 @endif
+@if (auth()->user()->role->name == 'employee')
+<x-side-bar-group :page="$page" title="Tasks" prefix="" icon="group">
+    <x-side-bar-element :page="$page" prefix="" title="view tasks" icon="view_list" route="user.tasks"/>
+</x-side-bar-group>
+@endif 
 {{--   Logout   --}}
 <x-side-bar-element :page="$page" prefix="logout" title="Logout" icon="logout" onclick="event.preventDefault();document.getElementById('logout-form').submit();"/>
 <form id="logout-form" action="{{ route('logout') }}" method="POST">

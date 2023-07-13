@@ -18,9 +18,10 @@ class CreateTasksTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->unsignedBigInteger('user_id');
-            $table->enum('state',['accomplished','progress']);
-            $table->enum('accept',['1','0'])->default('0');
-            $table->date('deadline');
+            $table->enum('state', ['accomplished', 'progress'])->default('progress');
+            $table->enum('accept', ['1', '0'])->nullable();
+            $table->dateTime('deadline');
+            $table->string('report')->nullable();
             $table->timestamps();
         });
     }

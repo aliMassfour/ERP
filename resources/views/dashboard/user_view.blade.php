@@ -26,7 +26,7 @@
                 <tr>
                     <td class="text-center">{{$user->name}}</td>
                     <td class="text-center">{{ $user->username }}</td>
-                    <td class="text-center">{{ $user->role == 'super_admin' ? 'super admin' : $user->role }}</td>
+                    <td class="text-center">{{ $user->role->name == 'admin' ? 'admin' : $user->role->name }}</td>
                     <td class="text-center">{{$user->created_at->diffForHumans()}}</td>
                     <td class="td-actions text-center">
                         <a href="{{ route('users.edit',$user->id) }}"><button type="button" rel="tooltip" class="btn btn-success btn-round">
@@ -61,7 +61,9 @@
                             </div>
                         </form>
                     </td>
+                    <td class="text-center td-actions"><a href="{{ route('task.index',$user->id) }}">show tasks</a></td>
                 </tr>
+                
                 @endforeach
             </tbody>
         </table>

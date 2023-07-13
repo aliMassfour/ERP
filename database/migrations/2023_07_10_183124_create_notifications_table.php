@@ -17,6 +17,7 @@ class CreateNotificationsTable extends Migration
             $table->id();
             $table->string('subject');
             $table->unsignedBigInteger('user_id');
+            $table->enum('status', ['read', 'unread'])->default('unread');
             $table->timestamps();
         });
     }
