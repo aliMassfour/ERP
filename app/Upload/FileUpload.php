@@ -4,6 +4,7 @@ namespace App\Upload;
 
 use App\Models\Task;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class FileUpload extends Upload
 {
@@ -16,7 +17,9 @@ class FileUpload extends Upload
     }
     public function upload()
     {
-        $this->path = $this->file->store('Reports/' . $this->task->id, 'public');
+        $extension = $this->file->getClientOriginalExtension(); 
+        $filename = $this->task->id . '_' . $this->task->name . '.' . $extension;
+        $path = Storage::disk('public')->putFileAs('reports/'.$this->task->id, $this->file, $filename);
+        $this->path = $path;
     }
-    
 }

@@ -22,6 +22,7 @@ class CreateTasksTable extends Migration
             $table->enum('accept', ['1', '0'])->nullable();
             $table->dateTime('deadline');
             $table->string('report')->nullable();
+            $table->integer('evaluation')->nullable();
             $table->timestamps();
         });
     }

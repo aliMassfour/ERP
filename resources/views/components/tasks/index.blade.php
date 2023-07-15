@@ -3,7 +3,29 @@
 
 
 
+    <style>
+        .rating {
+            display: inline-block;
+        }
 
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            color: #ddd;
+            font-size: 2.5rem;
+            padding: 0 0.1rem;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .rating label:hover,
+        .rating label:hover~label,
+        .rating input:checked~label {
+            color: #f2b01e;
+        }
+    </style>
     <x-slot name="style">
         <style>
             css Copy .form-control-file {
@@ -155,16 +177,45 @@
                                 @method('delete')
                                 <button class="dropdown-item" type="submit">delete</button>
                             </form>
+                            <a class="dropdown-item" href="{{ route('task.report.download',$task->id) }}">download
+                                report</a>
+                            <button class="dropdown-item" onclick="ev({{ json_encode($task) }})">evaluate</button>
+
                         </div>
                     </div>
                     @endif
                 </div>
             </div>
         </div>
-        <div style="position: left" class="list-group">
-            <div class="list-group-items"></div>
-            <div>
-
+    </div>
+    <div class="modal fade" id="evaluateModal{{ $task->id }}" tabindex="-1" role="dialog"
+        aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Evaluation
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('task.accept',$task) }}" method="POST">
+                        @csrf
+                        <div class="form-group">
+                            <label for="rating">Rating:</label>
+                            <div class="rating">
+                                <input type="radio" name="rating" id="rating-5{{ $task->id }}" value="5"><label
+                                    for="rating-5{{ $task->id }}">5</label>
+                                <input type="radio" name="rating" id="rating-4{{ $task->id }}" value="4"><label
+                                    for="rating-4{{ $task->id }}">4</label>
+                                <input type="radio" name="rating" id="rating-3{{ $task->id }}" value="3"><label
+                                    for="rating-3{{ $task->id }}">3</label>
+                                <input type="radio" name="rating" id="rating-2{{ $task->id }}" value="2"><label
+                                    for="rating-2{{ $task->id }}">2</label>
+                                <input type="radio" name="rating" id="rating-1{{ $task->id }}" value="1"><label
+                                    for="rating-1{{ $task->id }}">1</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn success">evaluate</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -188,6 +239,8 @@
             </div>
         </div>
     </div>
+
+    {{-- time count --}}
     <div class="modal fade" id="exampleModal{{ $task->id }}" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -246,7 +299,12 @@
             $('#reportModal'+task.id).modal('show');
         }
     </script>
-
+    <script>
+        function ev(task){
+        console.log(task);
+        $('#evaluateModal'+task.id).modal('show');
+    }
+    </script>
     <script>
         function show(task) {
    // Show the modal
@@ -256,34 +314,34 @@
         var countDownDate = new Date(task.deadline).getTime();
         var x = setInterval(function() {
 
-// Get the current date and time
-var now = new Date().getTime();
+    // Get the current date and time
+    var now = new Date().getTime();
 
-// Calculate the remaining time
-var distance = countDownDate - now;
-console.log(distance);
-  // If the countdown is finished, display a message
-if (distance < 0) {
-   clearInterval(x);
-   document.getElementById("countdown-timer"+task.id).innerHTML = "EXPIRED";
-}
-// Calculate days, hours, minutes, and seconds
-var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-// Display the countdown values in the HTML elements
-document.getElementById("days"+task.id).innerHTML = days;
-document.getElementById("hours"+task.id).innerHTML = hours;
-document.getElementById("minutes"+task.id).innerHTML = minutes;
-document.getElementById("seconds"+task.id).innerHTML = seconds;
-
-
-}, 1000);
+    // Calculate the remaining time
+    var distance = countDownDate - now;
+    console.log(distance);
+    // If the countdown is finished, display a message
+    if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("countdown-timer"+task.id).innerHTML = "EXPIRED";
     }
-    
-   // Update the countdown every second
+    // Calculate days, hours, minutes, and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Display the countdown values in the HTML elements
+    document.getElementById("days"+task.id).innerHTML = days;
+    document.getElementById("hours"+task.id).innerHTML = hours;
+    document.getElementById("minutes"+task.id).innerHTML = minutes;
+    document.getElementById("seconds"+task.id).innerHTML = seconds;
+
+
+    }, 1000);
+        }
+        
+
   
    
 

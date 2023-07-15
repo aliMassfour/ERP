@@ -8,6 +8,7 @@ use App\Models\Task;
 use App\Notification\ReportNotification;
 use App\Upload\FileUpload;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
@@ -18,8 +19,8 @@ class ReportController extends Controller
     }
     public function report(Request $request, Task $task)
     {
-       $role = Role::where('name','admin')->first();
-       $user = $role->users()->first();
+        $role = Role::where('name', 'admin')->first();
+        $user = $role->users()->first();
         $file = $request->file('report');
         $upload = new FileUpload($file, $task);
         $upload->upload();
@@ -27,9 +28,25 @@ class ReportController extends Controller
         $task->report = $path;
         $task->state = 'accomplished';
         if ($task->save()) {
-            $this->notification->notificate($user , $task);
+            $this->notification->notificate($user, $task);
             return redirect()->route('user.tasks')->withStatus('upload the report success');
         }
         return redirect()->route('user.tasks')->withStatus('error occured please try again');
+    }
+    public function download(Task $task)
+    {
+        $path = Storage::disk('public')->path($task->report); 
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+        $mimeTypes = [
+            'pdf' => 'application/pdf',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            // add more MIME types as needed
+        ];
+        $headers = [
+            'Content-Type' => $mimeTypes[$extension] ?? 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="' . $task->name . '.' . $extension . '"',
+        ];
+        return response()->download($path, $task->name . '.' . $extension, $headers);
     }
 }

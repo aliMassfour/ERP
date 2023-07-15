@@ -19,7 +19,7 @@ class TaskController extends Controller
     }
     public function index(User $user)
     {
-        $tasks = $user->tasks;
+        $tasks = $user->tasks()->where('deadline', '>', now())->get();
         return view('components.tasks.index')->with('tasks', $tasks);
     }
     public function create()
@@ -58,14 +58,22 @@ class TaskController extends Controller
         $tasks = $user->tasks;
         return view('components.tasks.index')->with('tasks', $tasks);
     }
-    public function accept(Task $task)
+    public function accept(Request $request, Task $task)
     {
+        $this->validate($request, [
+            'rating' => 'required'
+        ]);
+        $task->evaluation = $request->rating;
+        $task->accept = '1';
+        if ($task->save()) {
+            return redirect()->route('task.index',$task->user->id)->withStatus('accept the task success');
+        } else {
+            return redirect()->route('task.index',$task->user->id)->withStatus('error ocurred please try again');
+        }
     }
     public function destroy(Task $task)
     {
         $task->delete();
         return redirect()->route('dashboard')->withStatus('delete the task success');
     }
-   
-    
 }

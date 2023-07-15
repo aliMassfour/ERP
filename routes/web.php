@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/task/store', [TaskController::class, 'store'])->name('task.store');
     Route::get('/task/index/{user}', [TaskController::class, 'index'])->name('task.index');
     Route::delete('/task/destroy/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
-   
+    Route::post('/task/accept/{task}',[TaskController::class,'accept'])->name('task.accept');
 });
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/user/tasks', [TaskController::class, 'UserTaskList'])->name('user.tasks');
@@ -38,6 +38,8 @@ Route::group(['middleware' => 'auth'], function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/notification', [NotificationController::class, 'UnreadNotification'])->name('notificatoion');
 });
-Route::group(['middleware'=>'auth'],function(){
+Route::group( ['middleware' => 'auth'],function () {
     Route::post('/task/report/{task}', [ReportController::class, 'report'])->name('task.report');
+    Route::get('/report/download/{task}', [ReportController::class, 'download'])->name('task.report.download');
 });
+
