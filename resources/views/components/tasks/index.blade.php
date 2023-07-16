@@ -165,8 +165,10 @@
                         show count down time
                     </button>
                     @if(auth()->user()->role->name=='employee')
+                    @can('generateReport',$task)
                     <button type="button" class="btn bts-success"
                         onclick="report({{ json_encode($task) }})">report</button>
+                    @endcan
                     @endif
                     @if(auth()->user()->role->name=='admin')
                     <div class="btn-group">
@@ -177,9 +179,11 @@
                                 @method('delete')
                                 <button class="dropdown-item" type="submit">delete</button>
                             </form>
+                            @can('downloadReport',$task)
                             <a class="dropdown-item" href="{{ route('task.report.download',$task->id) }}">download
                                 report</a>
                             <button class="dropdown-item" onclick="ev({{ json_encode($task) }})">evaluate</button>
+                            @endcan
 
                         </div>
                     </div>

@@ -64,4 +64,12 @@ class User extends Authenticatable
         }
         return false;
     }
+    public function isAdmin()
+    {
+        return $this->role->name == 'admin';
+    }
+    public function isAccountant()
+    {
+        return $this->role->name == 'accountant';
+    }
 }

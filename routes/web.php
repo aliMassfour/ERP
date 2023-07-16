@@ -7,6 +7,7 @@ use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Task\TaskController;
+use App\Models\Task;
 use Illuminate\Support\Facades\Route;
 
 
@@ -30,16 +31,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/task/store', [TaskController::class, 'store'])->name('task.store');
     Route::get('/task/index/{user}', [TaskController::class, 'index'])->name('task.index');
     Route::delete('/task/destroy/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
-    Route::post('/task/accept/{task}',[TaskController::class,'accept'])->name('task.accept');
+    Route::post('/task/accept/{task}', [TaskController::class, 'accept'])->name('task.accept');
 });
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/user/tasks', [TaskController::class, 'UserTaskList'])->name('user.tasks');
+    Route::get('/users/salarys',[UsersController::class,'getSalary'])->name('users.salary'); 
+    Route::put('/salary/pay/{user}',[UsersController::class,'pay'])->name('users.pay');  
 });
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/notification', [NotificationController::class, 'UnreadNotification'])->name('notificatoion');
 });
-Route::group( ['middleware' => 'auth'],function () {
+Route::group(['middleware' => 'auth'], function () {
     Route::post('/task/report/{task}', [ReportController::class, 'report'])->name('task.report');
     Route::get('/report/download/{task}', [ReportController::class, 'download'])->name('task.report.download');
 });
-
+Route::get('/test', function () {
+    $task = Task::find(3);
+    return  $task->isReported();
+});

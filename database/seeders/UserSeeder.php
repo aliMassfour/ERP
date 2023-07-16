@@ -18,12 +18,16 @@ class UserSeeder extends Seeder
     public function run()
     {
         Role::create([
-            'name' => 'admin' ,
+            'name' => 'admin',
             'salary' => 2000
         ]);
         Role::create([
-            'name' => 'employee' ,
+            'name' => 'employee',
             'salary' => 1000
+        ]);
+        Role::create([
+            'name' => 'accountant',
+            'salary' => '10000'
         ]);
         User::create([
             'name' => 'Admin',
@@ -40,6 +44,15 @@ class UserSeeder extends Seeder
             'password' => Hash::make('employee'),
             'points' => 0,
             'role_id' => 2,
+        ]);
+        User::create([
+            'name' => 'accountant',
+            'email' => 'accountant@gmail.com',
+            'username' => 'accountant',
+            'password' => Hash::make('accountant'),
+            'points' => 0,
+            'role_id' => 3
+
         ]);
     }
 }
