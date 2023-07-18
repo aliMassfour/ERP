@@ -18,15 +18,15 @@ $page ??= "dashboard";
 
 </x-side-bar-group>
 @endif
-@if (auth()->user()->role->name == 'employee')
+@if (auth()->user()->role->name == 'employee' || auth()->user()->role ->name == 'accountant')
 <x-side-bar-group :page="$page" title="Tasks" prefix="" icon="group">
     <x-side-bar-element :page="$page" prefix="" title="view tasks" icon="view_list" route="user.tasks" />
 </x-side-bar-group>
 @endif
 @if (auth()->user()->role->name == 'accountant')
 <x-side-bar-group :page="$page" prefix="users" title="Employee Salarys" icon="group">
-    <x-side-bar-element :page="$page" prefix="" title="View Salary" icon="view_list" route="users.salary"/>
-   
+    <x-side-bar-element :page="$page" prefix="" title="View Salary" icon="view_list" route="users.salary" />
+
 </x-side-bar-group>
 @endif
 {{-- Logout --}}

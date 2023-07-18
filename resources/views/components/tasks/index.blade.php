@@ -183,6 +183,11 @@
                             <a class="dropdown-item" href="{{ route('task.report.download',$task->id) }}">download
                                 report</a>
                             <button class="dropdown-item" onclick="ev({{ json_encode($task) }})">evaluate</button>
+                                <form action="{{ route('task.reject',$task) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <button class="dropdown-item" type="submit">reject</button>
+                                </form>
                             @endcan
 
                         </div>
@@ -202,6 +207,7 @@
                 <div class="modal-body">
                     <form action="{{ route('task.accept',$task) }}" method="POST">
                         @csrf
+                        @method('put')
                         <div class="form-group">
                             <label for="rating">Rating:</label>
                             <div class="rating">

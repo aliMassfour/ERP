@@ -66,14 +66,24 @@ class TaskController extends Controller
         $task->evaluation = $request->rating;
         $task->accept = '1';
         if ($task->save()) {
-            return redirect()->route('task.index',$task->user->id)->withStatus('accept the task success');
+            return redirect()->route('task.index', $task->user->id)->withStatus('accept the task success');
         } else {
-            return redirect()->route('task.index',$task->user->id)->withStatus('error ocurred please try again');
+            return redirect()->route('task.index', $task->user->id)->withStatus('error ocurred please try again');
         }
     }
     public function destroy(Task $task)
     {
         $task->delete();
         return redirect()->route('dashboard')->withStatus('delete the task success');
+    }
+    public function reject(Task $task)
+    {
+        $task->accept = '0';
+        $task->evaluation=0;
+        if($task->save())
+        {
+            return redirect()->back()->withStatus('task rejected');
+        }
+       
     }
 }

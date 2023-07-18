@@ -100,6 +100,6 @@ class TaskPolicy
     {
         $now = Carbon::now();
         $deadline = Carbon::parse($task->deadline);
-        return $deadline->lt($now);
+        return $now->lt($deadline);
     }
 }
