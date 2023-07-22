@@ -1,7 +1,4 @@
 <x-layouts.dashboard>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
 
     <style>
         .rating {
@@ -145,53 +142,104 @@
         </style>
 
     </x-slot>
+    <label for="status-select">task filter</label>
+    <form>
+        <select id="status-select" class="form-control">
+            <option value="">All</option>
+            <option value="accepted">Accepted</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+            <option value="accomplished">accomplished</option>
+        </select>
+    </form>
     @if(sizeOf($tasks)>0)
-    @foreach ($tasks as $task)
-
+    @foreach ($tasks as $task )
     <div class="row">
 
         <div class="col-md-6 ">
-            <div class="order-card">
-                <div class="d-flex" style="align-items: center;justify-content: space-between;">
-                    <div class="order-num"> #task{{ $task->id }}</div>
-                    <div class="d-flex">
-                        name : {{ $task->name }}
-                        description : {{ $task->description }}
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between mt-3">
-                    <button type="button" data-toggle="modal" rel="tooltip" class="btn btn-success"
-                        onclick="show({{ json_encode($task)  }})">
-                        show count down time
-                    </button>
-                    @if(auth()->user()->role->name=='employee')
-                    @can('generateReport',$task)
-                    <button type="button" class="btn bts-success"
-                        onclick="report({{ json_encode($task) }})">report</button>
-                    @endcan
-                    @endif
-                    @if(auth()->user()->role->name=='admin')
-                    <div class="btn-group">
-                        <a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
-                        <div class="dropdown-menu">
-                            <form action="{{ route('task.destroy',$task->id) }}" method="POST">
-                                @csrf
-                                @method('delete')
-                                <button class="dropdown-item" type="submit">delete</button>
-                            </form>
-                            @can('downloadReport',$task)
-                            <a class="dropdown-item" href="{{ route('task.report.download',$task->id) }}">download
-                                report</a>
-                            <button class="dropdown-item" onclick="ev({{ json_encode($task) }})">evaluate</button>
-
-                            <button class="dropdown-item" type="button"
-                                onclick="reject({{ json_encode($task) }})">reject</button>
-
-                            @endcan
-
+            <div class="task" data-status="{{ $task->status }}">
+                <div class="order-card">
+                    <div class="d-flex" style="align-items: center;justify-content: space-between;">
+                        <div class="order-num"> #task{{ $task->id }}</div>
+                        <div class="d-flex">
+                            name : {{ $task->name }}
+                            description : {{ $task->description }}
                         </div>
                     </div>
-                    @endif
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="button" data-toggle="modal" rel="tooltip" class="btn btn-success"
+                            onclick="show({{ json_encode($task)  }})">
+                            show count down time
+                        </button>
+                        @if(auth()->user()->role->name=='employee')
+                        @can('generateReport',$task)
+                        <button type="button" class="btn bts-success"
+                            onclick="report({{ json_encode($task) }})">report</button>
+                        @endcan
+                        @endif
+                        @if(auth()->user()->role->name=='admin')
+                        <div class="btn-group">
+                            <a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
+                            <div class="dropdown-menu">
+                                <form action="{{ route('task.destroy',$task->id) }}" method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    <button class="dropdown-item" type="submit">delete</button>
+                                </form>
+                                @can('downloadReport',$task)
+                                <a class="dropdown-item" href="{{ route('task.report.download',$task->id) }}">download
+                                    report</a>
+                                <button class="dropdown-item" onclick="ev({{ json_encode($task) }})">evaluate</button>
+
+                                <button class="dropdown-item" type="button"
+                                    onclick="reject({{ json_encode($task) }})">reject</button>
+
+                                @endcan
+
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal{{ $task->id }}" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                   time counter 
+                </div>
+                <div class="modal-body">
+                    <div id="countdown-timer{{ $task->id }}">
+                        <div class="row">
+                            <div class="col">
+                                <div class="countdown-timer-item">
+                                    <span id="days{{ $task->id }}"></span>
+                                    <br>Days
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="countdown-timer-item">
+                                    <span id="hours{{ $task->id }}"></span>
+                                    <br>Hours
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="countdown-timer-item">
+                                    <span id="minutes{{ $task->id }}"></span>
+                                    <br>Minutes
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="countdown-timer-item">
+                                    <span id="seconds{{ $task->id }}"></span>
+                                    <br>Seconds
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -267,117 +315,82 @@
             </div>
         </div>
     </div>
-
-    {{-- time count --}}
-    <div class="modal fade" id="exampleModal{{ $task->id }}" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-
-                </div>
-                <div class="modal-body">
-                    <div id="countdown-timer{{ $task->id }}">
-                        <div class="row">
-                            <div class="col">
-                                <div class="countdown-timer-item">
-                                    <span id="days{{ $task->id }}"></span>
-                                    <br>Days
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="countdown-timer-item">
-                                    <span id="hours{{ $task->id }}"></span>
-                                    <br>Hours
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="countdown-timer-item">
-                                    <span id="minutes{{ $task->id }}"></span>
-                                    <br>Minutes
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="countdown-timer-item">
-                                    <span id="seconds{{ $task->id }}"></span>
-                                    <br>Seconds
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     @endforeach
-    @else
-    <h2 class="h2">there is no tasks for this user</h2>
-    @php
-    $task = (object) [
-    'name' => null,
-    'deadline' => null
-    ];
-    @endphp
+
     @endif
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // this script is for report modal
-        function report(task){
-            console.log(task);
-            $('#reportModal'+task.id).modal('show');
-        }
-        function reject(task)
-        {
-            console.log(task);
-            $('#rejectModal'+task.id).modal('show');
-        }
+        $(document).ready(function() {
+        $('#status-select').change(function() {
+            var selectedStatus = $(this).val();
+            $('.task').hide();
+            if (selectedStatus === '') {
+                $('.task').show();
+            } else {
+                $('.task[data-status="' + selectedStatus + '"]').show();
+            }
+        });
+    });
     </script>
     <script>
-        function ev(task){
+    // this script is for report modal
+    function report(task){
         console.log(task);
-        $('#evaluateModal'+task.id).modal('show');
+        $('#reportModal'+task.id).modal('show');
     }
-    </script>
-    <script>
-        function show(task) {
-   // Show the modal
-   $('#exampleModal' +task.id).modal('show');
+    function reject(task)
+    {
+        console.log(task);
+        $('#rejectModal'+task.id).modal('show');
+    }
+</script>
+<script>
+    function ev(task){
     console.log(task);
-    if(task.deadline !=null){
-        var countDownDate = new Date(task.deadline).getTime();
-        var x = setInterval(function() {
+    $('#evaluateModal'+task.id).modal('show');
+}
+</script>
+<script>
+    function show(task) {
+// Show the modal
+$('#exampleModal' +task.id).modal('show');
+console.log(task);
+if(task.deadline !=null){
+    var countDownDate = new Date(task.deadline).getTime();
+    var x = setInterval(function() {
 
-    // Get the current date and time
-    var now = new Date().getTime();
+// Get the current date and time
+var now = new Date().getTime();
 
-    // Calculate the remaining time
-    var distance = countDownDate - now;
-    console.log(distance);
-    // If the countdown is finished, display a message
-    if (distance < 0) {
-    clearInterval(x);
-    document.getElementById("countdown-timer"+task.id).innerHTML = "EXPIRED";
+// Calculate the remaining time
+var distance = countDownDate - now;
+console.log(distance);
+// If the countdown is finished, display a message
+if (distance < 0) {
+clearInterval(x);
+document.getElementById("countdown-timer"+task.id).innerHTML = "EXPIRED";
+}
+// Calculate days, hours, minutes, and seconds
+var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+// Display the countdown values in the HTML elements
+document.getElementById("days"+task.id).innerHTML = days;
+document.getElementById("hours"+task.id).innerHTML = hours;
+document.getElementById("minutes"+task.id).innerHTML = minutes;
+document.getElementById("seconds"+task.id).innerHTML = seconds;
+
+
+}, 1000);
     }
-    // Calculate days, hours, minutes, and seconds
-    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    // Display the countdown values in the HTML elements
-    document.getElementById("days"+task.id).innerHTML = days;
-    document.getElementById("hours"+task.id).innerHTML = hours;
-    document.getElementById("minutes"+task.id).innerHTML = minutes;
-    document.getElementById("seconds"+task.id).innerHTML = seconds;
+    
 
 
-    }, 1000);
-        }
-        
 
-  
-   
 
 }
-    </script>
+</script>
+
 </x-layouts.dashboard>

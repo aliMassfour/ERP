@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Task;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\User;
+use App\Notification\RejectNotification;
 use App\Notification\TaskNotification;
 use App\Upload\FileUpload;
 use Exception;
@@ -60,15 +61,19 @@ class TaskController extends Controller
     }
     public function accept(Request $request, Task $task)
     {
-        $this->validate($request, [
-            'rating' => 'required'
-        ]);
-        $task->evaluation = $request->rating;
+        // $this->validate($request, [
+        //     'rating' => 'required'
+        // ]);
+        if ($request->has('rating')) {
+            $task->evaluation = $request->rating;
+        } else {
+            $task->evaluation = 0;
+        }
         $task->accept = '1';
         if ($task->save()) {
-            return redirect()->route('task.index', $task->user->id)->withStatus('accept the task success');
+            return redirect()->back()->withStatus('accept the task success');
         } else {
-            return redirect()->route('task.index', $task->user->id)->withStatus('error ocurred please try again');
+            return redirect()->back()->withStatus('error ocurred please try again');
         }
     }
     public function destroy(Task $task)
@@ -76,14 +81,37 @@ class TaskController extends Controller
         $task->delete();
         return redirect()->route('dashboard')->withStatus('delete the task success');
     }
-    public function reject(Task $task)
+    public function reject(Task $task, Request $request)
     {
         $task->accept = '0';
-        $task->evaluation=0;
-        if($task->save())
-        {
+        $task->evaluation = 0;
+
+        if ($task->save()) {
+            $this->task_notificate = new RejectNotification($request->message);
+            $this->task_notificate->notificate($task->user, $task);
             return redirect()->back()->withStatus('task rejected');
         }
-       
+    }
+    public function view()
+    {
+        $tasks = Task::all();
+        $filter_tasks = [];
+        $tasks->filter(function ($task) use (&$filter_tasks) {
+            if ($task->accept == '0') {
+                $task->setAttribute('status', 'rejected');
+            } elseif ($task->state == 'progress') {
+                $task->setAttribute('status', 'pending');
+            } elseif ($task->accept == '1') {
+                $task->setAttribute('status', 'accepted');
+            } elseif ($task->dedline > now()) {
+                $task->setAttribute('status', 'expired');
+            } elseif ($task->state == 'accomplished' && $task->accept == null) {
+                $task->setAttribute('status', 'accomplished');
+            }
+            $task->makeHidden(['user', 'report', 'evaluation', 'created_at', 'updated_at', 'deadline', 'accept', 'state', 'user_id']);
+            $task->setAttribute('user_name', $task->user->name);
+            $filter_tasks[] = $task;
+        });
+        return view('components.tasks.view_tasks')->with('tasks', $filter_tasks);
     }
 }

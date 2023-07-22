@@ -33,6 +33,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/task/destroy/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
     Route::put('/task/accept/{task}', [TaskController::class, 'accept'])->name('task.accept');
     Route::put('/task/reject/{task}', [TaskController::class, 'reject'])->name('task.reject');
+  
+    Route::get('/task/view',[TaskController::class,'view'])->name('task.view');
 });
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/user/tasks', [TaskController::class, 'UserTaskList'])->name('user.tasks');

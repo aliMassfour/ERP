@@ -15,6 +15,8 @@ $page ??= "dashboard";
 {{-- task management --}}
 <x-side-bar-group :page="$page" title="Task Managment" prefix="task.create" icon="group">
     <x-side-bar-element :page="$page" prefix="task.create" title="create new task" icon="add" route="task.create" />
+    <x-side-bar-element :page="$page" prefix="view" title="view tasks" icon="group" route="task.view" />
+    {{-- <x-side-bar-element :page="$page" prefix = "rejected.task" title="rejected task" icon="add" route="task.rejected" /> --}}
 
 </x-side-bar-group>
 @endif
