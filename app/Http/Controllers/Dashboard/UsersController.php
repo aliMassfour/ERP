@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +25,8 @@ class UsersController extends Controller
 
     public function create()
     {
-        return view('dashboard.user_create');
+        $roles = Role::all();
+        return view('dashboard.user_create')->with('roles', $roles);
     }
 
     public function store(Request $request)
@@ -33,13 +35,15 @@ class UsersController extends Controller
             'name'     => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
-            'role'     => ['required', 'in:super_admin,admin,user'],
+            'role'     => ['required'],
+            'email' => ['required']
         ]);
         $user = new User();
         $user->name = $request->name;
         $user->username = $request->username;
-        $user->role = $request->role;
         $user->password = Hash::make($request->password);
+        $user->role_id = $request->role;
+        $user->email = $request->email;
         $user->save();
 
         return back()->withStatus(__('user is created successfully'));
@@ -112,7 +116,7 @@ class UsersController extends Controller
     }
     public function getSalary()
     {
-        $users = User::OrderBy('points','desc')->get();
+        $users = User::OrderBy('points', 'desc')->get();
         return view('components.Accountant.accountant')->with('users', $users);
     }
     public function pay(User $user)

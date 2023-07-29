@@ -27,6 +27,7 @@ class ReportController extends Controller
         $path = $upload->getPath();
         $task->report = $path;
         $task->state = 'accomplished';
+        $task->accept=null;
         if ($task->save()) {
             $this->notification->notificate($user, $task);
             return redirect()->route('user.tasks')->withStatus('upload the report success');

@@ -18,6 +18,7 @@ class TaskController extends Controller
     {
         $this->task_notificate = new TaskNotification();
     }
+    // must delete
     public function index(User $user)
     {
         $tasks = $user->tasks()->where('deadline', '>', now())->get();
@@ -57,7 +58,24 @@ class TaskController extends Controller
     {
         $user = auth()->user();
         $tasks = $user->tasks;
-        return view('components.tasks.index')->with('tasks', $tasks);
+        $filter_tasks = [];
+        $tasks->filter(function ($task) use (&$filter_tasks) {
+            if ($task->accept == '0') {
+                $task->setAttribute('status', 'rejected');
+            } elseif ($task->state == 'progress') {
+                $task->setAttribute('status', 'pending');
+            } elseif ($task->accept == '1') {
+                $task->setAttribute('status', 'accepted');
+            } elseif ($task->dedline > now()) {
+                $task->setAttribute('status', 'expired');
+            } elseif ($task->state == 'accomplished' && $task->accept == null) {
+                $task->setAttribute('status', 'accomplished');
+            }
+            $task->makeHidden(['user', 'report', 'evaluation', 'created_at', 'updated_at', 'deadline', 'state', 'user_id']);
+            $task->setAttribute('user_name', $task->user->name);
+            $filter_tasks[] = $task;
+        });
+        return view('components.tasks.view_tasks')->with('tasks', $tasks);
     }
     public function accept(Request $request, Task $task)
     {
@@ -108,10 +126,31 @@ class TaskController extends Controller
             } elseif ($task->state == 'accomplished' && $task->accept == null) {
                 $task->setAttribute('status', 'accomplished');
             }
-            $task->makeHidden(['user', 'report', 'evaluation', 'created_at', 'updated_at', 'deadline', 'accept', 'state', 'user_id']);
+            $task->makeHidden(['user', 'report', 'evaluation', 'created_at', 'updated_at', 'deadline',  'state', 'user_id']);
             $task->setAttribute('user_name', $task->user->name);
             $filter_tasks[] = $task;
         });
+        // dd($filter_tasks);
         return view('components.tasks.view_tasks')->with('tasks', $filter_tasks);
+    }
+    public function edit(Task $task)
+    {
+        return view('components.tasks.update_task')->with('task', $task);
+    }
+    public function update(REquest $request, Task $task)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'description' => 'required',
+            'deadline' => 'required|date',
+            'user_id' => 'required'
+        ]);
+        $task->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'deadline' => $request->deadline,
+            'user_id' => $request->user_id
+        ]);
+        return redirect()->back()->withStatus('task updated successfully');
     }
 }

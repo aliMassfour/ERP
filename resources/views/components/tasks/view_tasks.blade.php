@@ -173,8 +173,10 @@
                         </button>
                         @if(auth()->user()->role->name=='employee')
                         @can('generateReport',$task)
+                        @if ($task->status=='progress' || $task->accept=='0')
                         <button type="button" class="btn bts-success"
                             onclick="report({{ json_encode($task) }})">report</button>
+                        @endif
                         @endcan
                         @endif
                         @if(auth()->user()->role->name=='admin')
@@ -186,16 +188,16 @@
                                     @method('delete')
                                     <button class="dropdown-item" type="submit">delete</button>
                                 </form>
+                                <a class="dropdown-item" href="{{ route('task.edit',$task) }}">edit</a>
                                 @can('downloadReport',$task)
                                 <a class="dropdown-item" href="{{ route('task.report.download',$task->id) }}">download
                                     report</a>
                                 <button class="dropdown-item" onclick="ev({{ json_encode($task) }})">evaluate</button>
-
+                                @if ($task->accept==null)
                                 <button class="dropdown-item" type="button"
                                     onclick="reject({{ json_encode($task) }})">reject</button>
-
+                                @endif
                                 @endcan
-
                             </div>
                         </div>
                         @endif
@@ -209,7 +211,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                   time counter 
+                    time counter
                 </div>
                 <div class="modal-body">
                     <div id="countdown-timer{{ $task->id }}">
@@ -257,20 +259,31 @@
                         @method('put')
                         <div class="form-group">
                             <label for="rating">Rating:</label>
-                            <div class="rating">
-                                <input type="radio" name="rating" id="rating-5{{ $task->id }}" value="5"><label
-                                    for="rating-5{{ $task->id }}">5</label>
-                                <input type="radio" name="rating" id="rating-4{{ $task->id }}" value="4"><label
-                                    for="rating-4{{ $task->id }}">4</label>
-                                <input type="radio" name="rating" id="rating-3{{ $task->id }}" value="3"><label
-                                    for="rating-3{{ $task->id }}">3</label>
-                                <input type="radio" name="rating" id="rating-2{{ $task->id }}" value="2"><label
-                                    for="rating-2{{ $task->id }}">2</label>
-                                <input type="radio" name="rating" id="rating-1{{ $task->id }}" value="1"><label
-                                    for="rating-1{{ $task->id }}">1</label>
+                            <div class="rating" aria-valuenow="{{ $task->evaluation }}">
+                                <input type="radio" name="rating" id="rating-5{{ $task->id }}" value="5" {{
+                                    $task->evaluation == 5 ? 'checked' : '' }}>
+                                <label for="rating-5{{ $task->id }}">5</label>
+
+                                <input type="radio" name="rating" id="rating-4{{ $task->id }}" value="4" {{
+                                    $task->evaluation == 4 ? 'checked' : '' }}>
+                                <label for="rating-4{{ $task->id }}">4</label>
+
+                                <input type="radio" name="rating" id="rating-3{{ $task->id }}" value="3" {{
+                                    $task->evaluation == 3 ? 'checked' : '' }}>
+                                <label for="rating-3{{ $task->id }}">3</label>
+
+                                <input type="radio" name="rating" id="rating-2{{ $task->id }}" value="2" {{
+                                    $task->evaluation == 2 ? 'checked' : '' }}>
+                                <label for="rating-2{{ $task->id }}">2</label>
+
+                                <input type="radio" name="rating" id="rating-1{{ $task->id }}" value="1" {{
+                                    $task->evaluation == 1 ? 'checked' : '' }}>
+                                <label for="rating-1{{ $task->id }}">1</label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn success">evaluate</button>
+                        @if ($task->accept === null)
+                        <button type="submit" class="btn btn-success">Evaluate</button>
+                        @endif
                     </form>
                 </div>
             </div>
@@ -333,7 +346,7 @@
     });
     </script>
     <script>
-    // this script is for report modal
+        // this script is for report modal
     function report(task){
         console.log(task);
         $('#reportModal'+task.id).modal('show');
@@ -343,15 +356,15 @@
         console.log(task);
         $('#rejectModal'+task.id).modal('show');
     }
-</script>
-<script>
-    function ev(task){
+    </script>
+    <script>
+        function ev(task){
     console.log(task);
     $('#evaluateModal'+task.id).modal('show');
 }
-</script>
-<script>
-    function show(task) {
+    </script>
+    <script>
+        function show(task) {
 // Show the modal
 $('#exampleModal' +task.id).modal('show');
 console.log(task);
@@ -391,6 +404,6 @@ document.getElementById("seconds"+task.id).innerHTML = seconds;
 
 
 }
-</script>
+    </script>
 
 </x-layouts.dashboard>

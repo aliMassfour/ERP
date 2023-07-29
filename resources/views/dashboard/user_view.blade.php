@@ -29,33 +29,43 @@
                     <td class="text-center">{{ $user->role->name == 'admin' ? 'admin' : $user->role->name }}</td>
                     <td class="text-center">{{$user->created_at->diffForHumans()}}</td>
                     <td class="td-actions text-center">
-                        <a href="{{ route('users.edit',$user->id) }}"><button type="button" rel="tooltip" class="btn btn-success btn-round">
-                            <i class="material-icons" style=" display: contents;">edit</i>
-                        </button></a>
-                        <button type="button" data-toggle="modal" data-target="#exampleModal{{ $user->id }}"   rel="tooltip" class="btn btn-danger btn-round">
+                        <a href="{{ route('users.edit',$user->id) }}"><button type="button" rel="tooltip"
+                                class="btn btn-success btn-round">
+                                <i class="material-icons" style=" display: contents;">edit</i>
+                            </button></a>
+                        @if ($user->role->name!=='admin')
+                        <button type="button" data-toggle="modal" data-target="#exampleModal{{ $user->id }}"
+                            rel="tooltip" class="btn btn-danger btn-round">
                             <i class="material-icons" style=" display: contents;">close</i>
                         </button>
+                        @endif
+
                         <form class="delete" action="{{ route('users.destroy',$user->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
 
                             <!-- Modal -->
-                            <div class="modal fade" id="exampleModal{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="exampleModal{{ $user->id }}" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
-                                    <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Hi  @if(Auth::user()->name){{ Auth::user()->name }}@endif !!! </h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                    </div>
-                                    <center>   <div class="modal-body">
-                                    Are you sure you want to delete this user?
-                                    </div></center>
-                                    <div class="modal-footer">
-                                    <button type="button" id="close" class="btn btn-secondary" style=" right: 30px;" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                    </div>
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Hi @if(Auth::user()->name){{
+                                                Auth::user()->name }}@endif !!! </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <center>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete this user?
+                                            </div>
+                                        </center>
+                                        <div class="modal-footer">
+                                            <button type="button" id="close" class="btn btn-secondary"
+                                                style=" right: 30px;" data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -63,7 +73,7 @@
                     </td>
                     <td class="text-center td-actions"><a href="{{ route('task.index',$user->id) }}">show tasks</a></td>
                 </tr>
-                
+
                 @endforeach
             </tbody>
         </table>

@@ -145,53 +145,65 @@
         </style>
 
     </x-slot>
+    <label for="status-select">task filter</label>
+    <form>
+        <select id="status-select" class="form-control">
+            <option value="">All</option>
+            <option value="accepted">Accepted</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+            <option value="accomplished">accomplished</option>
+        </select>
+    </form>
     @if(sizeOf($tasks)>0)
     @foreach ($tasks as $task)
 
     <div class="row">
 
         <div class="col-md-6 ">
-            <div class="order-card">
-                <div class="d-flex" style="align-items: center;justify-content: space-between;">
-                    <div class="order-num"> #task{{ $task->id }}</div>
-                    <div class="d-flex">
-                        name : {{ $task->name }}
-                        description : {{ $task->description }}
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between mt-3">
-                    <button type="button" data-toggle="modal" rel="tooltip" class="btn btn-success"
-                        onclick="show({{ json_encode($task)  }})">
-                        show count down time
-                    </button>
-                    @if(auth()->user()->role->name=='employee')
-                    @can('generateReport',$task)
-                    <button type="button" class="btn bts-success"
-                        onclick="report({{ json_encode($task) }})">report</button>
-                    @endcan
-                    @endif
-                    @if(auth()->user()->role->name=='admin')
-                    <div class="btn-group">
-                        <a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
-                        <div class="dropdown-menu">
-                            <form action="{{ route('task.destroy',$task->id) }}" method="POST">
-                                @csrf
-                                @method('delete')
-                                <button class="dropdown-item" type="submit">delete</button>
-                            </form>
-                            @can('downloadReport',$task)
-                            <a class="dropdown-item" href="{{ route('task.report.download',$task->id) }}">download
-                                report</a>
-                            <button class="dropdown-item" onclick="ev({{ json_encode($task) }})">evaluate</button>
-
-                            <button class="dropdown-item" type="button"
-                                onclick="reject({{ json_encode($task) }})">reject</button>
-
-                            @endcan
-
+            <div class="task" data-status="{{ $task->status }}">
+                <div class="order-card">
+                    <div class="d-flex" style="align-items: center;justify-content: space-between;">
+                        <div class="order-num"> #task{{ $task->id }}</div>
+                        <div class="d-flex">
+                            name : {{ $task->name }}
+                            description : {{ $task->description }}
                         </div>
                     </div>
-                    @endif
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="button" data-toggle="modal" rel="tooltip" class="btn btn-success"
+                            onclick="show({{ json_encode($task)  }})">
+                            show count down time
+                        </button>
+                        @if(auth()->user()->role->name=='employee')
+                        @can('generateReport',$task)
+                        <button type="button" class="btn bts-success"
+                            onclick="report({{ json_encode($task) }})">report</button>
+                        @endcan
+                        @endif
+                        @if(auth()->user()->role->name=='admin')
+                        <div class="btn-group">
+                            <a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
+                            <div class="dropdown-menu">
+                                <form action="{{ route('task.destroy',$task->id) }}" method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    <button class="dropdown-item" type="submit">delete</button>
+                                </form>
+                                @can('downloadReport',$task)
+                                <a class="dropdown-item" href="{{ route('task.report.download',$task->id) }}">download
+                                    report</a>
+                                <button class="dropdown-item" onclick="ev({{ json_encode($task) }})">evaluate</button>
+
+                                <button class="dropdown-item" type="button"
+                                    onclick="reject({{ json_encode($task) }})">reject</button>
+
+                                @endcan
+
+                            </div>
+                        </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -379,5 +391,18 @@
    
 
 }
+    </script>
+    <script>
+        $(document).ready(function() {
+        $('#status-select').change(function() {
+            var selectedStatus = $(this).val();
+            $('.task').hide();
+            if (selectedStatus === '') {
+                $('.task').show();
+            } else {
+                $('.task[data-status="' + selectedStatus + '"]').show();
+            }
+        });
+    });
     </script>
 </x-layouts.dashboard>

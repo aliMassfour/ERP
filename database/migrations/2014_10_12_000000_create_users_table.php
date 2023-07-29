@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique();
             $table->string('password');
             $table->unsignedBigInteger('role_id');
-            $table->integer('points');
+            $table->integer('points')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

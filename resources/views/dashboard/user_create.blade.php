@@ -27,6 +27,17 @@
             </div>
         </div>
         <div class="row">
+            <label class="col-sm-3 col-form-label" for="input-email">{{ __('Email') }}</label>
+            <div class="col-sm-8">
+            <div class="form-group{{ $errors->has('email') ? ' has-danger' : '' }}">
+                <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" id="input-email" type="text" placeholder="{{ __('email') }}" value="{{ old('email') }}"  required />
+                @if ($errors->has('email'))
+                <span id="email-error" class="error text-danger" for="input-username">{{ $errors->first('email') }}</span>
+                @endif
+            </div>
+            </div>
+        </div>
+        <div class="row">
             <label class="col-sm-3 col-form-label" for="input-password">{{ __(' Password') }}</label>
             <div class="col-sm-8">
                 <div class="form-group{{ $errors->has('password') ? ' has-danger' : '' }}">
@@ -42,9 +53,10 @@
             <div class="col-sm-8">
             <div class="form-group{{ $errors->has('role') ? ' has-danger' : '' }}">
                 <select class="form-control{{ $errors->has('role') ? ' is-invalid' : '' }}" name="role" id="input-role" required>
-                    <option value="user" @if (old('role')=="user") selected @endif>user</option>
-                    <option value="admin" @if (old('role')=="admin") selected @endif>admin</option>
-                    <option value="super_admin" @if (old('role')=="super_admin") selected @endif>super admin</option>
+                  
+                   @foreach ($roles as $role )
+                   <option  @if (old('role')=="user") selected @endif value="{{ $role->id }}">{{ $role->name }}</option>
+                   @endforeach
                 </select>
                 @if ($errors->has('role'))
                 <span id="role-error" class="error text-danger" for="input-role">{{ $errors->first('role') }}</span>
