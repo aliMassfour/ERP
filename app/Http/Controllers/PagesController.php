@@ -18,14 +18,15 @@ class PagesController extends Controller
         $max = 0;
         $month_user = null;
         foreach ($users as $user) {
-            $tasks = $user->tasks()->whereMonth('created_at', now()->month)->get();
-            if(sizeof($tasks)>$max)
-            {
-                $max=sizeof($tasks);
-                $month_user = $user; 
-            }
+            $tasks = $user->tasks()->whereMonth('created_at', now()->month)
+                ->where('accept', '1')
+                ->get();
 
+            if (sizeof($tasks) > $max && sizeof($tasks) > 0) {
+                $max = sizeof($tasks);
+                $month_user = $user;
+            }
         }
-        return view('dashboard')->with('user',$user);
+        return view('dashboard')->with('user', $month_user);
     }
 }

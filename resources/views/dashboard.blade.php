@@ -4,9 +4,10 @@
             font-size: 24px;
         }
     </style>
+    @if ($user !==null)
     <div class="row">
         <div class="col-md-6">
-            <div class="card mb-3" >
+            <div class="card mb-3">
                 <div class="card-header">
                     <h5 class="card-title">Best Employee of the Month</h5>
                 </div>
@@ -25,4 +26,5 @@
             </div>
         </div>
     </div>
+    @endif
 </x-layouts.dashboard>
