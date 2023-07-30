@@ -19,6 +19,9 @@ class ReportController extends Controller
     }
     public function report(Request $request, Task $task)
     {
+        $this->validate($request,[
+            'report' => 'required|file'
+        ]);
         $role = Role::where('name', 'admin')->first();
         $user = $role->users()->first();
         $file = $request->file('report');

@@ -173,9 +173,10 @@
                         </button>
                         @if(auth()->user()->role->name=='employee')
                         @can('generateReport',$task)
-                        @if ($task->status=='progress' || $task->accept=='0')
+                        @if ($task->status=="rejected" || $task->status=="progress")
                         <button type="button" class="btn bts-success"
                             onclick="report({{ json_encode($task) }})">report</button>
+                          
                         @endif
                         @endcan
                         @endif
@@ -247,7 +248,7 @@
         </div>
     </div>
     <div class="modal fade" id="evaluateModal{{ $task->id }}" tabindex="-1" role="dialog"
-        aria-labelledby="reportModalLabel" aria-hidden="true">
+        aria-labelledby="evaluateLabelAria" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -297,11 +298,14 @@
                     Task Report
                 </div>
                 <div class="modal-body">
-                    <form action="{{    route('task.report',$task->id)  }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{route('task.report',$task->id)}}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div class="form-group">
+                        <div>
                             <label for="report{{ $task->id }}">report</label>
                             <input type="file" id="report{{ $task->id }}" class="form-control-file" name="report">
+                            @if ($errors->has('report'))
+                                <span class="danger">you should select file first</span>
+                            @endif
                         </div>
                         <button type="submit" class="btn btn-success">report</button>
                     </form>
@@ -407,3 +411,4 @@ document.getElementById("seconds"+task.id).innerHTML = seconds;
     </script>
 
 </x-layouts.dashboard>
+{{-- {{ $tasks[0]->status }} --}}

@@ -57,7 +57,7 @@ class TaskController extends Controller
     public function UserTaskList()
     {
         $user = auth()->user();
-        $tasks = $user->tasks;
+        $tasks = $user->tasks()->whereMonth('created_at', '=', now()->month)->get();
         $filter_tasks = [];
         $tasks->filter(function ($task) use (&$filter_tasks) {
             if ($task->accept == '0') {
@@ -112,7 +112,7 @@ class TaskController extends Controller
     }
     public function view()
     {
-        $tasks = Task::all();
+        $tasks = Task::whereMonth('created_at', '=  ', now()->month)->get();
         $filter_tasks = [];
         $tasks->filter(function ($task) use (&$filter_tasks) {
             if ($task->accept == '0') {
