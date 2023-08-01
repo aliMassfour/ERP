@@ -29,9 +29,52 @@
             <a class="dropdown-item" href="{{ route('logout') }}"
               onclick="event.preventDefault();document.getElementById('logout-form').submit();">Log out</a>
             <a class="dropdown-item" href="{{ route('notificatoion') }}">notification</a>
+            <button class="dropdown-item" onclick="changepassword({{ auth()->user() }})">change password</button>
           </div>
         </li>
       </ul>
+
+    </div>
+
+  </div>
+
+</nav>
+<div class="modal fade" id="changepassword" tabindex="-1" role="dialog" aria-labelledby="changepassword"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        Change Password
+      </div>
+      <div class="modal-body">
+        <form action="{{ route('profile.password') }}" method="POST">
+          @csrf
+          @method('put')
+          <div class="form-group">
+            <label for="current_password">current password</label><br>
+            <input type="password" id="current_password" name="old_password"><br>
+            @if ($errors->has('old_password'))
+              <div class="danger">{{ $error->first('old_password') }}</div>
+            @endif
+            <label for="new_passowrd">new password</label><br>
+            <input type="password" id="new_password" name="password"><br>
+            @if ($errors->has('password'))
+              <div class="danger">{{ $error->first('password') }}</div>
+            @endif
+            <label for="password confirmation">Confirm password</label><br>
+            <input type="text" name="password confirmation">
+
+          </div>
+          <button type="submit" class="btn btn success">save</button>
+        </form>
+      </div>
     </div>
   </div>
-</nav>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  function changepassword(user)
+{
+  $('#changepassword').modal('show');
+}
+</script>
