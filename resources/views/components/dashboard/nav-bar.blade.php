@@ -59,7 +59,7 @@
             <label for="new_passowrd">new password</label><br>
             <input type="password" id="new_password" name="password"><br>
             @if ($errors->has('password'))
-              <div class="danger">{{ $error->first('password') }}</div>
+              <div class="danger">{{ $errors->first('password') }}</div>
             @endif
             <label for="password confirmation">Confirm password</label><br>
             <input type="text" name="password confirmation">

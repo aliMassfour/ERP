@@ -60,7 +60,7 @@ class UsersController extends Controller
             'name'     => ['string', 'max:255'],
             'username' => ['string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => ($request->password) ? ['string', 'min:8'] : [],
-            'role'     => ['in:super_admin,admin,user'],
+            // 'role'     => ['in:super_admin,admin,user'],
         ]);
 
         if ($request->name)
@@ -70,7 +70,7 @@ class UsersController extends Controller
         if ($request->password)
             $user->password = Hash::make($request->password);
         if ($request->role)
-            $user->role = $request->role;
+            $user->role_id = $request->role;
         $user->save();
 
         return back()->withStatus(__('user is updated successfully'));

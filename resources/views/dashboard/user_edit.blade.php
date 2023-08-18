@@ -43,9 +43,9 @@
             <div class="col-sm-8">
             <div class="form-group{{ $errors->has('role') ? ' has-danger' : '' }}">
                 <select class="form-control{{ $errors->has('role') ? ' is-invalid' : '' }}" name="role" id="input-role">
-                    <option value="user" @if ((old('user')??$user->role)=="user") selected @endif>user</option>
-                    <option value="admin" @if ((old('role')??$user->role)=="admin") selected @endif>admin</option>
-                    <option value="super_admin" @if ((old('super_admin')??$user->role)=="super_admin") selected @endif>super admin</option>
+                    <option value=2 @if ((old('user')??$user->role->id)==2) selected @endif>employee</option>
+                    <option value=1 @if ((old('role')??$user->role->id)==1) selected @endif>admin</option>
+                    <option value=3 @if ((old('role')??$user->role->id)==3) selected @endif>accountant</option>
                 </select>
                 @if ($errors->has('role'))
                 <span id="role-error" class="error text-danger" for="input-role">{{ $errors->first('role') }}</span>
