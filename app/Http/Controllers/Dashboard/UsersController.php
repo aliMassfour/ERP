@@ -36,7 +36,7 @@ class UsersController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
             'role'     => ['required'],
-            'email' => ['required']
+            'email' => ['required','email']
         ]);
         $user = new User();
         $user->name = $request->name;
