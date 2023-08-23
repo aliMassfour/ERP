@@ -71,7 +71,7 @@ class TaskController extends Controller
             } elseif ($task->state == 'accomplished' && $task->accept == null) {
                 $task->setAttribute('status', 'accomplished');
             }
-            $task->makeHidden(['user', 'report', 'evaluation', 'created_at', 'updated_at', 'deadline', 'state', 'user_id']);
+            $task->makeHidden(['user', 'report', 'evaluation', 'created_at', 'updated_at', 'state', 'user_id']);
             $task->setAttribute('user_name', $task->user->name);
             $filter_tasks[] = $task;
         });
@@ -126,7 +126,7 @@ class TaskController extends Controller
             } elseif ($task->state == 'accomplished' && $task->accept == null) {
                 $task->setAttribute('status', 'accomplished');
             }
-            $task->makeHidden(['user', 'report', 'evaluation', 'created_at', 'updated_at', 'deadline',  'state', 'user_id']);
+            $task->makeHidden(['user', 'report', 'evaluation', 'created_at', 'updated_at',  'state', 'user_id']);
             $task->setAttribute('user_name', $task->user->name);
             $filter_tasks[] = $task;
         });

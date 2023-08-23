@@ -173,7 +173,7 @@
                         </button>
                         @if(auth()->user()->role->name=='employee')
                         @can('generateReport',$task)
-                        @if ($task->status=="rejected" || $task->status=="progress")
+                        @if ($task->status=="rejected" || $task->status=="pending")
                         <button type="button" class="btn bts-success"
                             onclick="report({{ json_encode($task) }})">report</button>
                           
@@ -371,7 +371,7 @@
         function show(task) {
 // Show the modal
 $('#exampleModal' +task.id).modal('show');
-console.log(task);
+console.log(task.deadline);
 if(task.deadline !=null){
     var countDownDate = new Date(task.deadline).getTime();
     var x = setInterval(function() {
